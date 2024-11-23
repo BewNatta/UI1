@@ -1,0 +1,66 @@
+ในการทำ "Press E to Pick" ใน Unity คุณสามารถทำได้โดยใช้การตรวจจับการกดปุ่ม "E" และการตรวจจับการชน (Collider) กับวัตถุที่สามารถเก็บได้
+
+ขั้นตอนหลักๆ ที่คุณต้องทำมีดังนี้:
+
+1. เตรียมวัตถุที่ต้องการเก็บ
+สร้าง GameObject (เช่น กล่องหรือไอเท็ม) ที่สามารถเก็บได้ใน Unity
+ตรวจสอบว่า GameObject นี้มี Collider (เช่น Box Collider) เพื่อให้สามารถตรวจจับการชนได้
+2. สร้างสคริปต์สำหรับการเก็บ
+สร้างสคริปต์ใหม่ใน Unity เช่น PickUpItem.cs
+ในสคริปต์นี้จะมีการตรวจจับการกดปุ่ม "E" และการชนกับไอเท็ม
+
+
+3. โค้ดตัวอย่าง
+using UnityEngine;
+
+public class PickUpItem : MonoBehaviour
+{
+    public float interactionDistance = 3f;  // ระยะที่สามารถเก็บไอเท็มได้
+    private bool isNearItem = false;       // ตรวจสอบว่าผู้เล่นอยู่ใกล้ไอเท็มหรือไม่
+
+    void Update()
+    {
+        // ตรวจสอบว่าผู้เล่นกดปุ่ม "E"
+        if (isNearItem && Input.GetKeyDown(KeyCode.E))
+        {
+            // ทำอะไรบางอย่างเมื่อผู้เล่นกด "E" เช่นเก็บไอเท็ม
+            PickUp();
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // ตรวจสอบว่าผู้เล่นเข้าสู่ Trigger ของไอเท็ม
+        if (other.CompareTag("Player"))
+        {
+            isNearItem = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        // ถ้าผู้เล่นออกจาก Trigger
+        if (other.CompareTag("Player"))
+        {
+            isNearItem = false;
+        }
+    }
+
+    void PickUp()
+    {
+        // ทำการเก็บไอเท็ม (เช่น ลบไอเท็มออกจาก scene หรือเพิ่มใน inventory)
+        Debug.Log("Item Picked Up!");
+        Destroy(gameObject);  // ลบไอเท็มออกจาก scene
+    }
+}
+
+4. การตั้งค่าใน Unity
+สร้าง GameObject ที่เป็นไอเท็มที่ผู้เล่นจะเก็บ (เช่น กล่องหรือวัตถุ)
+เพิ่ม Collider (เช่น Box Collider) ให้กับไอเท็ม และทำให้มันเป็น Trigger โดยการติ๊กที่ช่อง "Is Trigger"
+เพิ่มสคริปต์ PickUpItem.cs เข้าไปที่ไอเท็ม
+ตั้งค่าให้ตัวละคร (Player) มี Collider และ Rigidbody เพื่อให้การตรวจจับการชนทำงานได้
+ตรวจสอบว่าไอเท็มมี Tag เป็น "Item" และผู้เล่น (Player) มี Tag เป็น "Player"
+5. ทดสอบ
+เมื่อผู้เล่นเข้าใกล้ไอเท็ม (ภายในระยะที่กำหนด) และกดปุ่ม "E" ไอเท็มจะถูกเก็บ (หรือทำลาย) ทันที
+
+
